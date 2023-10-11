@@ -1,0 +1,27 @@
+.App {
+    background-image: url('https://img4.thuthuatphanmem.vn/uploads/2020/07/05/anh-background-cong-nghe-xanh_035953035.jpg'); /* Đặt đường dẫn đến hình ảnh của bạn ở đây */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Giữ hình ảnh ở vị trí cố định */
+    background-position: center center;
+    min-height: 100vh; /* Đảm bảo nền nói cả trang */
+    display: flex;
+  }
+  .type{
+    display: flex;
+    font-size: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+  .type >p {
+    margin-right: 10px;
+  }
+  label{
+    margin-left: 20px;
+  }
+  input[type="number"] {
+    width: 120px; /* Đặt kích thước width là 200px */
+    height: 40px;
+    margin-left: 30px;
+    font-size: 18px;
+  }

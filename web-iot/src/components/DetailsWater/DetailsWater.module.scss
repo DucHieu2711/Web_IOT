@@ -1,0 +1,22 @@
+.details {
+    background-image: url('https://img4.thuthuatphanmem.vn/uploads/2020/07/05/anh-background-cong-nghe-xanh_035953035.jpg'); /* Đặt đường dẫn đến hình ảnh của bạn ở đây */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Giữ hình ảnh ở vị trí cố định */
+    background-position: center center;
+    min-height: 100vh;
+  }
+  .detail{
+    display: flex;
+  }
+  .chart{
+    margin-top: 30px;
+    display: flex;
+    justify-content:space-around;
+  }
+  .timeUpdate{
+    color: #D2691E;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }

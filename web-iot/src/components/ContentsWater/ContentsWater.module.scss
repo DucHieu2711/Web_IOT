@@ -1,0 +1,23 @@
+.items{
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    margin-left: 100px;
+    margin-top: 40px;
+}
+.item{
+    border: red 1px solid;
+    margin-right: 30px;
+    width: 170px;
+    height: 180px;
+    font-weight: 600;
+    background-color: #FFDEAD;
+    padding-top: 20px;
+}
+.value{
+    font-size: 25px;
+    font-weight: 700;
+}
+.item > p:nth-child(2) {
+    margin-top: -15px;
+   }
