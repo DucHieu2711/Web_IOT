@@ -6,6 +6,7 @@ import WaterStatical from '../WaterStatistical/WaterStatistical';
 import DetailsAir from '../DetailsAir/DetailsAir';
 import NameAirStatistical from '../NameAirStatistical/NameAirStatistical';
 import NameWaterStatical from '../NameWaterStatistical/NameWaterStatistical';
+import { Link } from 'react-router-dom';
 const cx = classNames.bind(styles);
 function Statiscal() {
     const [apiData, setApiData] = useState(null);
@@ -97,12 +98,27 @@ function Statiscal() {
                 style={{ marginLeft: "40px", padding: "7px 20px" }}
                 className="btn btn-info"
                 onClick={() => {
-              if (selectedMonth && selectedYear) {
-                  setIsDataSelected(true);
-              } else {
-                  alert("Vui lòng chọn cả năm và tháng.");
-              }
-              }}
+                  if (selectedMonth && selectedYear) {
+                    // Kiểm tra giá trị tháng
+                    const monthValue = parseInt(selectedMonth, 10);
+                    if (monthValue < 1 || monthValue > 12) {
+                      alert("Tháng không hợp lệ. Vui lòng nhập lại!!!");
+                      return;
+                    }
+              
+                    // Kiểm tra giá trị năm
+                    const currentYear = new Date().getFullYear();
+                    const yearValue = parseInt(selectedYear, 10);
+                    if (yearValue > currentYear) {
+                      alert("Năm không hợp lệ. Vui lòng nhập lại!!!");
+                      return;
+                    }
+              
+                    setIsDataSelected(true);
+                  } else {
+                    alert("Vui lòng chọn cả năm và tháng.");
+                  }
+                }}
                 >Thống kê
               </button>
             </div>
@@ -122,6 +138,7 @@ function Statiscal() {
   (selectedOption.startsWith("TRC-water-sensor") && (
     <NameWaterStatical station_id={selectedOption} month={selectedMonth} year={selectedYear} />
   )))}
+  <Link to="/" style={{textDecoration:"none", color:"white",marginBottom:"20px"}}>Quay lại</Link>
         </div>
         
      );

@@ -2,12 +2,15 @@ import classNames from 'classnames/bind';
 import styles from './ContentsAir.module.scss';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import isEqual from 'lodash/isEqual';
 const cx = classNames.bind(styles);
 
 function ContentsAir() {
     const { stationId } = useParams();
     const [data, setData] = useState(null);
-    useEffect(() => {
+    const [forceUpdate, setForceUpdate] = useState(0);
+   
+    const fetchDataFromDatabase = () => {
         fetch(`http://localhost:1104/api/solar-air?station_id=${stationId}`)
             .then((response) => {
                 if (!response.ok) {
@@ -15,16 +18,48 @@ function ContentsAir() {
                 }
                 return response.json();
             })
-            .then((data) => {
-                setData(data);
-                console.log(data)
+            .then((newData) => {
+                // Luôn cập nhật dữ liệu mới khi có sự kiện SSE
+                setData(newData);
+                setForceUpdate((prev) => prev + 1);
             })
             .catch((error) => {
                 console.error('Lỗi', error);
             });
-    }, [stationId]);
+    };
+
+    useEffect(() => {
+        // Gọi hàm kiểm tra dữ liệu mới từ cơ sở dữ liệu
+        fetchDataFromDatabase();
+    }, [stationId,forceUpdate]);
+
+    useEffect(() => {
+        const eventSource = new EventSource(`http://localhost:1104/api/sse`);
+    
+        eventSource.onmessage = (event) => {
+            const newData = JSON.parse(event.data);
+    
+            // So sánh dữ liệu mới với dữ liệu cũ
+            if (!isEqual(data, newData)) {
+                alert('Dữ liệu đã được cập nhật')
+                fetchDataFromDatabase();
+    
+                // Gọi setForceUpdate để render lại Components ContentsAir
+                setForceUpdate((prev) => prev + 1);
+            }
+        };
+    
+        eventSource.onerror = (error) => {
+            console.error('Lỗi kết nối SSE:', error);
+        };
+    
+        return () => {
+            eventSource.close();
+        };
+    }, [data]);
+
     return ( 
-        <div className={cx('items')}>
+        <div key={forceUpdate} className={cx('items')}>
         {data && data.data.map((item, index) => (
             <div className={cx('item')} key={index}>
                 <p>{item.sensor_name}</p>

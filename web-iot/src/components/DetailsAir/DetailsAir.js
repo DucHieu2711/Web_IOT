@@ -7,6 +7,7 @@ import LineChartComponent from '../LineChart/LineChart';
 import ContentsAir from '../ContentsAir/ContentsAir';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 
 const cx = classNames.bind(styles);
 function DetailsAir() {
@@ -18,10 +19,12 @@ function DetailsAir() {
     const [co2Data, setCO2Data] = useState([]);
     const [soiltemperature, setSoiTemperature] = useState([]);
     const [maxTemperature,setMaxTemperature] = useState(null)
+    const [forceUpdateContentsAir, setForceUpdateContentsAir] = useState(0);
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth() + 1;
     useEffect(() => {
+        refreshContentsAir();
         fetch(`http://localhost:1104/api/solar-air?station_id=${stationId}`)
             .then((response) => {
                 if (!response.ok) {
@@ -93,11 +96,37 @@ function DetailsAir() {
          });
 
     }, [stationId, currentYear, currentMonth]);
+
+    const refreshContentsAir = useCallback(() => {
+        fetch(`http://localhost:1104/api/solar-air?station_id=${stationId}`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Kết nối thất bại');
+                }
+                return response.json();
+            })
+            .then((newData) => {
+                setData(newData);
+                if (newData && newData.time) {
+                    setTimeUpdate(newData.time);
+                }
+                if (newData && newData.data) {
+                    const humidityData = newData.data.find((item) => item.sensor_name === 'Độ Ẩm');
+                    if (humidityData) {
+                        setHumidity(humidityData.sensor_value);
+                        console.log(humidity.sensor_value);
+                    }
+                }
+            })
+            .catch((error) => {
+                console.error('Lỗi', error);
+            });
+    }, [stationId]);
     return ( 
         <div  className={cx('details')}>
             <div className={cx('detail')}>
                 <RoundChart className={cx('round-chart')} customThreshold={humidity}/>
-                <ContentsAir/>
+                <ContentsAir forceUpdate={forceUpdateContentsAir}/>
             </div>
             <div className={cx('chart')}>
             <ColumnChart  name="Biểu đồ thống kê nhiệt độ" data={temperatureData} dataKey="temperature"/>
